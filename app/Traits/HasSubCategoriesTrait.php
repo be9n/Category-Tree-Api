@@ -7,15 +7,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 trait HasSubCategoriesTrait
 {
-    public function scopeLoadDescendants(Builder $query, int $depth = null)
+    public function scopeLoadDescendants(Builder $query, ?int $depth = null) // This function runs when you call it in the query like Category::loadDescendants()->paginate();
     {
         return $this->loadRelation(
-            depth: $depth, // This is the depth of subcategories
+            depth: $depth,
             query: $query
         );
     }
 
-    public function loadDescendants(int $depth = null)
+    public function loadDescendants(?int $depth = null) // This function runs when you call it by an object of the model like this $category->loadDescendants();
     {
         return $this->loadRelation(
             depth: $depth,
@@ -23,11 +23,11 @@ trait HasSubCategoriesTrait
         );
     }
 
-    public function loadRelation(int $depth, bool $load = false, Builder $query = null): Builder | self
+    public function loadRelation(?int $depth, Builder $query = null, bool $load = false): Builder | self
     {
         $relation = 'descendants';
 
-        if ($depth) {
+        if ($depth) { // This is the depth of subcategories
             for ($i = 0; $i < $depth; $i++) {
                 if ($i == 0) {
                     $relation = 'children';
@@ -52,6 +52,6 @@ trait HasSubCategoriesTrait
 
     public function descendants(): HasMany
     {
-        return $this->children()->with('descendants'); // This retrieves the entire Category Tree
+        return $this->children()->with('descendants'); // This retrieves the entire Category Tree in a recursive way
     }
 }

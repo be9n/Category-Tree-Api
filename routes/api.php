@@ -21,7 +21,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'categories'], function () {
     Route::get('/', [CategoryController::class, 'index']);
-    Route::get('/{category}', [CategoryController::class, 'show']);
     Route::post('/', [CategoryController::class, 'store']);
-    Route::put('/{category}', [CategoryController::class, 'update']);
+    Route::get('/{category:slug}', [CategoryController::class, 'show']);
+    Route::put('/{category:slug}', [CategoryController::class, 'update']);
+    Route::delete('/{category:slug}', [CategoryController::class, 'destroy']);
+    Route::delete('/{category:slug}/force_delete', [CategoryController::class, 'forceDestroy']);
 });

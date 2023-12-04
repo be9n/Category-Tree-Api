@@ -21,6 +21,14 @@ class Category extends Model
         'slug',
     ];
 
+    protected static function boot(){
+        parent::boot();
+
+        static::deleting(function($model){
+            $model->children->map(fn($child) => $child->delete());
+        });
+    }
+
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()

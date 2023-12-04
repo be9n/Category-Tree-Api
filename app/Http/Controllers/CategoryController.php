@@ -12,7 +12,7 @@ class CategoryController extends Controller
     public function index()
     {
         try {
-            $categories = Category::parent()->loadDescendants(3)->get();
+            $categories = Category::parent()->loadDescendants(2)->paginate(1);
 
             return CategoryResource::collection($categories);
         } catch (\Illuminate\Database\Eloquent\RelationNotFoundException $exception) {
@@ -36,8 +36,25 @@ class CategoryController extends Controller
 
     public function show(Category $category)
     {
-        $category->loadDescendants(2);
+        $category->loadDescendants();
 
         return CategoryResource::make($category);
+    }
+
+    public function destroy(Category $category)
+    {
+        if ($category->children()->count()) {
+            return response(['message' => "You can't delete this category before deleting it's subcategories"], 422);
+        }
+
+        $category->delete();
+
+        return response(['message' => 'The category is deleted successfully'], 200);
+    }
+
+    public function forceDestroy(Category $category){
+        $category->delete();
+
+        return response(['message' => 'The category is deleted with all the subcategories successfully'], 200);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Category;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -23,22 +24,18 @@ class CategoryRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'parent_id' => ['nullable'],
-            'name' => ['required', 'string'],
+            'parent_id' => ['nullable', 'exists:categories,id'],
+            'name' => ['required', 'string', Rule::unique('categories', 'name')->ignore($this->category?->id)],
         ];
 
+
+
         if (request()->isMethod('put')) {
-            if ($this->parent_id && $this->parent_id == $this->category->id) {
+            if ($this->parent_id == $this->category->id) {
                 $rules['parent_id'][] = Rule::notIn([$this->category->id]);
                 // $rules['parent_id'][] = 'not_in:'.$this->category->id;
             }
-            
-            $rules['name'][] = Rule::unique('categories', 'name')->ignore($this->category->id);
         }
-
-        // if (request()->isMethod('put')) {
-        //     $rules['name'][] = 'unique:categories,name,' . $this->category->id;
-        // }
 
         return $rules;
     }
@@ -47,6 +44,7 @@ class CategoryRequest extends FormRequest
     {
         return [
             'parent_id.not_in' => 'The parent_id cannot be the same as the category_id.',
+            'parent_id.in' => 'There is no category with this id.',
         ];
     }
 }

@@ -25,7 +25,7 @@ class CategoryRequest extends FormRequest
     {
         $rules = [
             'parent_id' => ['nullable', 'exists:categories,id'],
-            'name' => ['required', 'string', Rule::unique('categories', 'name')->ignore($this->category?->id)],
+            'name' => ['required', 'string'],
         ];
 
 
@@ -44,7 +44,6 @@ class CategoryRequest extends FormRequest
     {
         return [
             'parent_id.not_in' => 'The parent_id cannot be the same as the category_id.',
-            'parent_id.in' => 'There is no category with this id.',
         ];
     }
 }

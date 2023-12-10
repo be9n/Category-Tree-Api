@@ -11,7 +11,7 @@ class CartController extends Controller
     {
         $products = auth()->user()->cart->products;
 
-        if($products->isEmpty()){
+        if ($products->isEmpty()) {
             return response([
                 'message' => 'No products found'
             ]);
@@ -50,11 +50,43 @@ class CartController extends Controller
         ], 200);
     }
 
-    public function deleteAllProducts(){
+    public function deleteAllProducts()
+    {
         auth()->user()->cart->products()->detach();
 
         return response([
             'message' => 'All products deleted successfully'
         ]);
+    }
+
+    public function checkOut()
+    {
+        $cart = auth()->user()->cart;
+
+        if ($cart->products->isEmpty()) {
+            return response()->json([
+                'message' => 'No products found in the cart',
+            ]);
+        }
+
+        $order = auth()->user()->orders()->create(['total_price' => $this->getTotalPrice($cart->products)]);
+
+        $cart->products->map(function ($product) use ($cart, $order) {
+            $order->products()->attach($product->id, ['quantity' => $product->pivot->quantity]);
+
+            $cart->products()->detach($product->id);
+        });
+
+        return response()->json([
+            'message' => 'Order created successfully',
+            'order' => $order
+        ]);
+    }
+
+    public function getTotalPrice($products)
+    {
+        return $products->sum(function ($product) {
+            return $product->price * $product->pivot->quantity;
+        });
     }
 }

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -33,6 +34,14 @@ Route::group(['middleware' => 'auth:sanctum'], function(){
         Route::post('/{product}', 'store');
         Route::put('/{product}', 'update');
         Route::delete('/deleteAll', 'deleteAllProducts');
+        Route::get('/order/check-out', 'checkOut');
+    });
+
+    Route::group(['prefix' => 'orders', 'controller' => OrderController::class], function(){
+        Route::get('/', 'index');
+        // Route::post('/', 'store');
+        // Route::put('/{product}', 'update');
+        // Route::delete('/deleteAll', 'deleteAllProducts');
     });
 
 

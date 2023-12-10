@@ -35,9 +35,9 @@ class CategoryResource extends JsonResource
         ];
 
         if ($category->relationLoaded('children')) {
-            $data['children'] = $category->children->map(fn ($child) => $this->mapCategory($child) );
+            $data['children'] = $category->children->map(fn ($child) => $this->mapCategory($child));
         } elseif ($category->relationLoaded('descendants')) {
-            $data['children'] = $category->descendants->map(fn ($child) => $this->mapCategory($child) );
+            $data['children'] = $category->descendants->map(fn ($child) => $this->mapCategory($child));
         }
 
         return $data;

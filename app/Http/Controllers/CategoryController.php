@@ -12,7 +12,7 @@ class CategoryController extends Controller
     public function index()
     {
         try {
-            $categories = Category::parent()->loadDescendants(2)->paginate(1);
+            $categories = Category::whereParent()->loadDescendants()->get();
 
             return CategoryResource::collection($categories);
         } catch (\Illuminate\Database\Eloquent\RelationNotFoundException $exception) {

@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 trait HasSubCategoriesTrait
@@ -43,6 +44,11 @@ trait HasSubCategoriesTrait
         }
 
         return $query->with($relation);
+    }
+
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'parent_id');
     }
 
     public function children(): HasMany

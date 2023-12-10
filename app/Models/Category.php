@@ -36,7 +36,7 @@ class Category extends Model
             ->saveSlugsTo('slug');
     }
 
-    public function scopeParent($query)
+    public function scopeWhereParent($query)
     {
         return $query->where('parent_id', null);
     }
